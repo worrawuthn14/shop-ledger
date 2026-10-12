@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snack Shop </title>
+    <title>Snack Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,16 +13,13 @@
         .page-view.active { display: block; animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Modal Animations */
         @keyframes popScale { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .modal-pop { animation: popScale 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes slideUp { 0% { transform: translateY(100%); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
-        .modal-slide { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        ::-webkit-scrollbar { width: 4px; background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .img-preview { width: 100%; height: 100%; object-fit: cover; }
         
-        /* สไตล์สำหรับ Toggle Switch */
         .toggle-checkbox:checked { right: 0; border-color: #10B981; }
         .toggle-checkbox:checked + .toggle-label { background-color: #10B981; }
         
@@ -108,16 +105,17 @@
                     </div>
                 </div>
                 
-                <!-- อัปเดตส่วน History (ประวัติล่าสุด) -->
+                <!-- ส่วนประวัติรายการที่มีระบบเลื่อนภายในตัว (Scrollable Container) ป้องกันหน้ายาวเกินไป -->
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative z-30">
                     <div class="flex justify-between items-center p-4 border-b border-gray-50">
                         <div class="flex items-center gap-2">
-                            <h3 class="text-sm font-bold text-gray-800">ประวัติล่าสุด</h3>
-                            <button id="btnToggleHistory" onclick="toggleHistoryView()" class="text-[9px] bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-bold transition-colors hover:bg-gray-200">ดูทั้งหมด</button>
+                            <h3 class="text-sm font-bold text-gray-800">ประวัติรายการ</h3>
+                            <button id="btnToggleHistory" onclick="toggleHistoryView()" class="text-[9px] bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md font-bold transition-colors hover:bg-gray-200 cursor-pointer">ดูทั้งหมด</button>
                         </div>
                         <button onclick="clearTransactions()" class="text-[9px] uppercase tracking-wider text-red-500 font-bold bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors relative z-40 cursor-pointer">ล้างบัญชี</button>
                     </div>
-                    <div id="historyList" class="p-2 max-h-64 overflow-y-auto"></div>
+                    <!-- กำหนดความสูงสูงสุด max-h-64 และเปิด scroll-y เพื่อไม่ให้หน้ายาวเกินไป -->
+                    <div id="historyList" class="p-2 max-h-64 overflow-y-auto space-y-1"></div>
                 </div>
             </main>
         </div>
@@ -202,9 +200,7 @@
             </button>
         </nav>
 
-        <!-- ================= MODALS (กึ่งกลางจอทั้งหมด) ================= -->
-        
-        <!-- Custom Alert/Confirm Modal -->
+        <!-- ================= MODALS ================= -->
         <div id="customAlert" class="fixed inset-0 bg-gray-900/60 alert-overlay z-[100] hidden flex items-center justify-center p-4">
             <div class="bg-white rounded-3xl p-6 w-full max-w-[300px] shadow-2xl modal-pop text-center">
                 <div id="alertIcon" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl mb-4"></div>
@@ -214,16 +210,12 @@
             </div>
         </div>
 
-      <!-- Modal: รับชำระเงิน (Checkout) -->
         <div id="checkoutModal" class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-3">
             <div class="bg-white rounded-[2rem] p-5 w-full max-w-[380px] shadow-2xl modal-pop relative max-h-[85vh] overflow-y-auto">
-                
                 <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 bg-gray-100 text-gray-500 rounded-full p-2 hover:bg-gray-200">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
-                
                 <h3 class="text-lg font-black text-center mb-3 text-gray-800 tracking-tight">รับชำระเงิน</h3>
-                
                 <div class="bg-gray-50 p-3 rounded-2xl mb-3 border border-gray-100">
                     <div id="checkoutItemsList" class="space-y-1.5 mb-2 text-sm font-medium"></div>
                     <div class="flex justify-between items-center pt-2 border-t border-dashed border-gray-300">
@@ -231,19 +223,15 @@
                         <span class="font-black text-gray-800" id="checkoutSubtotal">0.00 ฿</span>
                     </div>
                 </div>
-
                 <div id="appliedPromosContainer" class="space-y-2 mb-3"></div>
-
-                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-2xl border border-gray-200 mb-3 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-50 transition-all">
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-2xl border border-gray-200 mb-3">
                     <span class="font-bold text-gray-500 text-[10px] uppercase tracking-wider">ลดพิเศษ (บาท)</span>
                     <input type="number" id="manualDiscount" oninput="calculateChange()" class="w-24 text-right bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none font-black text-base text-blue-600 pb-1 placeholder-gray-300" placeholder="0">
                 </div>
-
                 <div class="flex justify-between items-center mb-4 bg-teal-50 p-4 rounded-[1.5rem] border border-teal-100">
                     <span class="font-black text-teal-800 text-sm">ยอดสุทธิ</span>
                     <span class="text-3xl font-black text-teal-600" id="finalTotal">0.00 ฿</span>
                 </div>
-
                 <div class="mb-4">
                     <div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-2xl">
                         <label class="cursor-pointer relative">
@@ -256,7 +244,6 @@
                         </label>
                     </div>
                 </div>
-
                 <div id="cashInputSection" class="mb-4 bg-white p-4 rounded-[1.5rem] border border-gray-200 shadow-sm">
                     <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">รับเงินจากลูกค้า (บาท)</label>
                     <input type="number" id="cashReceived" oninput="calculateChange()" class="w-full text-right px-4 py-2.5 rounded-xl border border-gray-200 focus:border-teal-500 outline-none text-2xl font-black text-gray-800 bg-gray-50 placeholder-gray-200" placeholder="0">
@@ -265,7 +252,6 @@
                         <span class="text-xl font-black text-red-500" id="changeAmount">0.00 ฿</span>
                     </div>
                 </div>
-
                 <div id="qrDisplaySection" class="hidden mb-4 flex flex-col items-center justify-center p-4 bg-gray-50 rounded-[1.5rem] border border-gray-200">
                     <h4 class="font-bold text-gray-800 text-xs mb-2">สแกน QR เพื่อโอนเงิน</h4>
                     <div class="w-32 h-32 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center overflow-hidden mb-2 p-2">
@@ -273,14 +259,12 @@
                         <div id="noQrMsg" class="text-center text-[9px] text-gray-400 font-bold uppercase leading-relaxed">ไม่ได้ตั้งค่า<br>QR Code</div>
                     </div>
                 </div>
-
                 <button id="confirmPayBtn" onclick="processCheckout()" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 rounded-xl shadow-lg disabled:opacity-50 text-base relative z-40 cursor-pointer transition-colors">
                     ยืนยันชำระเงิน
                 </button>
             </div>
         </div>
 
-        <!-- Modal: PRODUCT (เพิ่ม/แก้ไข) -->
         <div id="productModal" class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 max-w-md mx-auto">
             <div class="bg-white rounded-[2rem] p-6 w-full shadow-2xl modal-pop relative max-h-[90vh] overflow-y-auto">
                 <button onclick="closeProductModal()" class="absolute top-4 right-4 bg-gray-50 text-gray-400 rounded-full p-2 hover:bg-gray-100"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -297,7 +281,7 @@
                     <div class="space-y-3">
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 pl-1">ชื่อสินค้า <span class="text-red-500">*</span></label>
-                            <input type="text" id="prodName" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:border-teal-500 focus:ring-2 focus:ring-teal-50 outline-none font-bold text-sm">
+                            <input type="text" id="prodName" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:border-teal-500 outline-none font-bold text-sm">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
@@ -306,16 +290,15 @@
                             </div>
                             <div>
                                 <label class="block text-[10px] font-bold text-red-400 uppercase tracking-widest mb-1 pl-1">ลดราคา (%)</label>
-                                <input type="number" id="prodDiscountPercent" min="0" max="100" step="0.01" placeholder="0" class="w-full bg-red-50 border border-red-100 rounded-xl px-4 py-3 focus:border-red-500 outline-none font-black text-red-500 text-lg text-center placeholder-red-200">
+                                <input type="number" id="prodDiscountPercent" min="0" max="100" step="0.01" placeholder="0" class="w-full bg-red-50 border border-red-100 rounded-xl px-4 py-3 focus:border-red-500 outline-none font-black text-red-500 text-lg text-center">
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-gray-900 text-white font-bold py-3.5 rounded-2xl shadow-lg mt-2 transition-colors hover:bg-black">บันทึก</button>
+                    <button type="submit" class="w-full bg-gray-900 text-white font-bold py-3.5 rounded-2xl shadow-lg mt-2 hover:bg-black">บันทึก</button>
                 </form>
             </div>
         </div>
 
-        <!-- Modal: LOTS (จัดการสต็อก) -->
         <div id="lotModal" class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 max-w-md mx-auto">
             <div class="bg-white rounded-[2rem] p-5 w-full shadow-2xl modal-pop relative max-h-[90vh] flex flex-col">
                 <button onclick="closeLotModal()" class="absolute top-4 right-4 bg-gray-50 text-gray-400 rounded-full p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -323,17 +306,16 @@
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">คลังสต็อก</h3>
                     <p id="lotProductName" class="text-teal-600 font-black text-lg truncate"></p>
                 </div>
-                
                 <form id="lotForm" class="bg-gray-50 p-4 rounded-3xl border border-gray-100 mb-4 shrink-0">
                     <h4 id="lotFormTitle" class="font-black text-sm text-gray-700 mb-3 text-center">+ รับของเข้า</h4>
                     <div class="flex gap-2 mb-3">
                         <div class="flex-1">
                             <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1 px-1">จำนวนชิ้น <span class="text-red-500">*</span></label>
-                            <input type="number" id="lotQty" required min="1" class="w-full px-3 py-2 rounded-xl border border-gray-200 font-black outline-none text-center focus:border-teal-500 focus:ring-2 focus:ring-teal-50">
+                            <input type="number" id="lotQty" required min="1" class="w-full px-3 py-2 rounded-xl border border-gray-200 font-black outline-none text-center">
                         </div>
                         <div class="flex-1">
                             <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1 px-1">ทุน/ชิ้น <span class="text-red-500">*</span></label>
-                            <input type="number" id="lotCost" required min="0" step="0.01" class="w-full px-3 py-2 rounded-xl border border-gray-200 font-black outline-none text-center focus:border-teal-500 focus:ring-2 focus:ring-teal-50">
+                            <input type="number" id="lotCost" required min="0" step="0.01" class="w-full px-3 py-2 rounded-xl border border-gray-200 font-black outline-none text-center">
                         </div>
                     </div>
                     <div class="mb-4">
@@ -354,7 +336,6 @@
                         <button type="submit" id="btnSaveLot" class="flex-[2] bg-gray-900 text-white font-bold py-2.5 rounded-xl text-sm">บันทึกสต็อก</button>
                     </div>
                 </form>
-
                 <div class="flex-1 overflow-y-auto bg-white rounded-2xl p-2 border border-gray-100 shadow-inner">
                     <h4 class="font-bold text-[10px] text-gray-400 uppercase tracking-widest mb-2 px-2">รายการล็อต (FIFO)</h4>
                     <div id="lotList" class="space-y-2"></div>
@@ -362,7 +343,6 @@
             </div>
         </div>
 
-        <!-- Modal: บันทึกรายการ/แก้ไข (รายจ่าย/เบิกเงิน/ขาย) -->
         <div id="transactionModal" class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 max-w-md mx-auto">
             <div class="bg-white rounded-[2.5rem] p-6 w-full shadow-2xl modal-pop relative">
                 <button onclick="closeTransactionModal()" class="absolute top-4 right-4 bg-gray-50 text-gray-400 rounded-full p-2 hover:bg-gray-100"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -370,76 +350,67 @@
                     <div id="txModalIcon" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl mb-2"></div>
                     <h3 id="txModalTitle" class="text-xl font-black text-gray-800 tracking-tight">บันทึกรายการ</h3>
                 </div>
-                
                 <form id="txForm" class="space-y-4">
                     <input type="hidden" id="txType" value="expense">
-                    <!-- เพิ่ม input ซ่อนสำหรับเก็บ ID ตอนกดแก้ไข -->
-                    <input type="hidden" id="editTxId" value=""> 
-                    
+                    <input type="hidden" id="editTxId" value="">
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 pl-2">รายละเอียดรายการ</label>
-                        <input type="text" id="txDesc" required class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-800 outline-none font-bold text-sm text-center" placeholder="...">
+                        <input type="text" id="txDesc" required class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 outline-none font-bold text-sm text-center" placeholder="...">
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 pl-2">ยอดเงิน (บาท)</label>
-                        <input type="number" id="txAmount" required min="1" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-800 outline-none font-black text-3xl text-gray-900 text-center" placeholder="0">
+                        <input type="number" id="txAmount" required min="1" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 outline-none font-black text-3xl text-gray-900 text-center" placeholder="0">
                     </div>
                     <div class="pt-2">
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">ช่องทางกระเป๋าเงิน</label>
                         <div class="flex gap-2">
                             <label class="flex-1 cursor-pointer relative">
                                 <input type="radio" name="txPayMethod" value="cash" class="peer sr-only" checked>
-                                <div class="text-center py-3 rounded-xl border-2 border-gray-100 peer-checked:border-gray-800 peer-checked:bg-gray-900 peer-checked:text-white font-bold text-gray-400 text-sm transition-all">💵 ลิ้นชักเงินสด</div>
+                                <div class="text-center py-3 rounded-xl border-2 border-gray-100 peer-checked:border-gray-800 peer-checked:bg-gray-900 peer-checked:text-white font-bold text-gray-400 text-sm">💵 ลิ้นชักเงินสด</div>
                             </label>
                             <label class="flex-1 cursor-pointer relative">
                                 <input type="radio" name="txPayMethod" value="transfer" class="peer sr-only">
-                                <div class="text-center py-3 rounded-xl border-2 border-gray-100 peer-checked:border-gray-800 peer-checked:bg-gray-900 peer-checked:text-white font-bold text-gray-400 text-sm transition-all">🏦 บัญชีธนาคาร</div>
+                                <div class="text-center py-3 rounded-xl border-2 border-gray-100 peer-checked:border-gray-800 peer-checked:bg-gray-900 peer-checked:text-white font-bold text-gray-400 text-sm">🏦 บัญชีธนาคาร</div>
                             </label>
                         </div>
                     </div>
-                    <button type="submit" id="btnSaveTx" class="w-full text-white font-bold py-4 rounded-2xl shadow-lg transition-all text-lg mt-2">ยืนยันบันทึก</button>
+                    <button type="submit" id="btnSaveTx" class="w-full text-white font-bold py-4 rounded-2xl shadow-lg text-lg mt-2">ยืนยันบันทึก</button>
                 </form>
             </div>
         </div>
 
-        <!-- Modal: สร้างโปรโมชันใหม่ -->
         <div id="promoModal" class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 max-w-md mx-auto">
             <div class="bg-white rounded-[2.5rem] p-6 w-full shadow-2xl modal-pop relative max-h-[90vh] flex flex-col">
                 <button onclick="closePromoModal()" class="absolute top-4 right-4 bg-gray-50 text-gray-400 rounded-full p-2 hover:bg-gray-100"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                 <h3 id="promoModalTitle" class="text-xl font-black mb-4 text-gray-800 text-center">สร้างกฎส่วนลด</h3>
-                
                 <form id="promoFormConfig" class="flex-1 flex flex-col overflow-hidden">
                     <div class="bg-gray-50 p-4 rounded-3xl border border-gray-200 mb-4 shrink-0">
                         <div class="mb-3">
                             <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 pl-1">ชื่อโปรโมชัน</label>
-                            <input type="text" id="promoName" required placeholder="เช่น โปรปีใหม่" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-none font-bold text-sm text-center focus:border-teal-500 focus:ring-2 focus:ring-teal-50">
+                            <input type="text" id="promoName" required placeholder="เช่น โปรปีใหม่" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-none font-bold text-sm text-center">
                         </div>
                         <div class="flex gap-2">
                             <div class="flex-1">
                                 <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1 text-center">ยอดซื้อครบ</label>
-                                <input type="number" id="promoThreshold" required min="1" placeholder="500" class="w-full px-2 py-2 rounded-xl border border-gray-200 outline-none font-black text-center focus:border-teal-500 text-lg">
+                                <input type="number" id="promoThreshold" required min="1" placeholder="500" class="w-full px-2 py-2 rounded-xl border border-gray-200 outline-none font-black text-center text-lg">
                             </div>
                             <div class="flex-1">
                                 <label class="block text-[9px] font-bold text-teal-600 uppercase tracking-widest mb-1 text-center">ลดทันที</label>
-                                <input type="number" id="promoDiscount" required min="1" placeholder="50" class="w-full px-2 py-2 rounded-xl border border-teal-300 bg-teal-50 outline-none font-black text-center text-teal-600 focus:border-teal-500 text-lg">
+                                <input type="number" id="promoDiscount" required min="1" placeholder="50" class="w-full px-2 py-2 rounded-xl border border-teal-300 bg-teal-50 outline-none font-black text-center text-teal-600 text-lg">
                             </div>
                         </div>
                     </div>
-                    
                     <div class="flex-1 overflow-hidden flex flex-col mb-4 bg-white rounded-2xl border border-gray-100 p-2 shadow-inner">
                         <div class="flex justify-between items-center mb-2 px-2 border-b border-gray-100 pb-2">
                             <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">สินค้าร่วมรายการ</label>
                             <label class="flex items-center gap-1 cursor-pointer">
-                                <input type="checkbox" id="selectAllPromoProd" onchange="toggleSelectAllPromoProd()" class="w-3 h-3 text-teal-600 rounded focus:ring-teal-500">
+                                <input type="checkbox" id="selectAllPromoProd" onchange="toggleSelectAllPromoProd()" class="w-3 h-3 text-teal-600 rounded">
                                 <span class="text-[10px] font-bold text-teal-600">เลือกทั้งหมด</span>
                             </label>
                         </div>
-                        <div id="promoProductsContainer" class="flex-1 overflow-y-auto space-y-1 px-1">
-                            <!-- Checkboxes injected here -->
-                        </div>
+                        <div id="promoProductsContainer" class="flex-1 overflow-y-auto space-y-1 px-1"></div>
                     </div>
-                    
-                    <button type="submit" class="w-full bg-gray-900 text-white font-bold py-3.5 rounded-2xl text-md shadow-lg shrink-0 transition-colors hover:bg-black">บันทึกโปรโมชัน</button>
+                    <button type="submit" class="w-full bg-gray-900 text-white font-bold py-3.5 rounded-2xl text-md shadow-lg shrink-0 hover:bg-black">บันทึกโปรโมชัน</button>
                 </form>
             </div>
         </div>
@@ -447,66 +418,49 @@
     </div>
 
     <script>
-        // ================= DATA STRUCTURE (V11) =================
         let products = JSON.parse(localStorage.getItem('posProducts_v11')) || [];
         let transactions = JSON.parse(localStorage.getItem('posTransactions_v11')) || [];
-        let settings = JSON.parse(localStorage.getItem('posSettings_v11')) || {
-            qrCodeBase64: '', promotions: [] 
-        };
+        let settings = JSON.parse(localStorage.getItem('posSettings_v11')) || { qrCodeBase64: '', promotions: [] };
         
         let cart = []; 
         let currentEditingProductId = null;
         let currentEditingLotId = null;
         let currentEditingPromoId = null;
         let myChart = null;
-        let showAllHistory = false; // สำหรับสลับดูประวัติทั้งหมด
+        let showAllHistory = false;
 
         const formatMoney = (num) => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
         const formatInt = (num) => new Intl.NumberFormat('th-TH').format(num);
-        
         const actualPrice = (p) => {
             const discountPercent = p.discount || 0;
             const discountAmount = p.price * (discountPercent / 100);
             return Math.max(0, p.price - discountAmount);
         };
 
-        // ================= CUSTOM ALERT (SweetAlert Style) =================
         function customAlert(title, message, type = 'success', onConfirm = null, showCancel = false) {
             const overlay = document.getElementById('customAlert');
             document.getElementById('alertTitle').innerText = title;
             document.getElementById('alertMessage').innerText = message;
             
             const iconDiv = document.getElementById('alertIcon');
-            if(type === 'success') {
-                iconDiv.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-4 bg-green-50 text-green-500';
-                iconDiv.innerHTML = '✨';
-            } else if(type === 'error') {
-                iconDiv.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-4 bg-red-50 text-red-500';
-                iconDiv.innerHTML = '⚠️';
-            } else if(type === 'warning') {
-                iconDiv.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-4 bg-orange-50 text-orange-500';
-                iconDiv.innerHTML = '🚨';
-            }
+            if(type === 'success') { iconDiv.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-4 bg-green-50 text-green-500'; iconDiv.innerHTML = '✨'; }
+            else if(type === 'error') { iconDiv.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-4 bg-red-50 text-red-500'; iconDiv.innerHTML = '⚠️'; }
+            else if(type === 'warning') { iconDiv.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-4 bg-orange-50 text-orange-500'; iconDiv.innerHTML = '🚨'; }
 
             const btnContainer = document.getElementById('alertButtons');
             btnContainer.innerHTML = '';
-            
             if(showCancel) {
                 const cancelBtn = document.createElement('button');
-                cancelBtn.className = 'flex-1 bg-gray-100 text-gray-600 font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm cursor-pointer';
+                cancelBtn.className = 'flex-1 bg-gray-100 text-gray-600 font-bold py-3 rounded-xl hover:bg-gray-200 text-sm cursor-pointer';
                 cancelBtn.innerText = 'ยกเลิก';
                 cancelBtn.onclick = () => { overlay.classList.add('hidden'); };
                 btnContainer.appendChild(cancelBtn);
             }
-
             const okBtn = document.createElement('button');
             const okColor = type === 'warning' ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-900 hover:bg-black';
             okBtn.className = `flex-1 ${okColor} text-white font-bold py-3 rounded-xl transition-colors shadow-md text-sm cursor-pointer`;
             okBtn.innerText = 'ตกลง';
-            okBtn.onclick = () => {
-                overlay.classList.add('hidden');
-                if(onConfirm) onConfirm();
-            };
+            okBtn.onclick = () => { overlay.classList.add('hidden'); if(onConfirm) onConfirm(); };
             btnContainer.appendChild(okBtn);
             overlay.classList.remove('hidden');
         }
@@ -538,13 +492,11 @@
                     else if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
                     canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-                    
                     const compressed = canvas.toDataURL('image/jpeg', 0.6);
                     document.getElementById(inputId).value = compressed;
                     document.getElementById(previewId).src = compressed;
                     document.getElementById(previewId).classList.remove('hidden');
                     document.getElementById(placeholderId).classList.add('hidden');
-
                     if(isQR) {
                         settings.qrCodeBase64 = compressed; localStorage.setItem('posSettings_v11', JSON.stringify(settings));
                         document.getElementById('btnRemoveQR').classList.remove('hidden');
@@ -582,11 +534,10 @@
             if(!settings.promotions || settings.promotions.length === 0) {
                 list.innerHTML = '<div class="text-center p-6 border-2 border-dashed border-gray-200 rounded-3xl"><p class="text-xs text-gray-400 font-bold">ยังไม่มีการตั้งกฎส่วนลด</p></div>'; return;
             }
-
             settings.promotions.forEach(promo => {
                 const prodCount = promo.products.length;
                 list.innerHTML += `
-                    <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col transition-all">
+                    <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col">
                         <div class="flex justify-between items-start mb-2">
                             <div>
                                 <h4 class="font-black text-gray-800">${promo.name}</h4>
@@ -601,8 +552,8 @@
                         </div>
                         <p class="text-[10px] text-gray-400 mb-4 font-medium px-1">ร่วมรายการ: ${prodCount === products.length ? 'ทุกสินค้า' : prodCount + ' สินค้า'}</p>
                         <div class="flex gap-2 relative z-40">
-                            <button onclick="editPromo(${promo.id})" class="flex-1 text-xs font-bold text-gray-600 bg-gray-100 py-2 rounded-xl hover:bg-gray-200 transition-colors">แก้ไข</button>
-                            <button onclick="deletePromo(${promo.id})" class="text-xs font-bold text-red-500 bg-red-50 px-4 py-2 rounded-xl hover:bg-red-100 transition-colors">ลบ</button>
+                            <button onclick="openPromoModal(${promo.id})" class="flex-1 text-xs font-bold text-gray-600 bg-gray-100 py-2 rounded-xl hover:bg-gray-200">แก้ไข</button>
+                            <button onclick="deletePromo(${promo.id})" class="text-xs font-bold text-red-500 bg-red-50 px-4 py-2 rounded-xl hover:bg-red-100">ลบ</button>
                         </div>
                     </div>
                 `;
@@ -611,17 +562,13 @@
 
         function togglePromoStatus(id, isActive) {
             const idx = settings.promotions.findIndex(p => p.id === id);
-            if(idx > -1) {
-                settings.promotions[idx].active = isActive;
-                localStorage.setItem('posSettings_v11', JSON.stringify(settings));
-            }
+            if(idx > -1) { settings.promotions[idx].active = isActive; localStorage.setItem('posSettings_v11', JSON.stringify(settings)); }
         }
 
         function openPromoModal(id = null) {
             currentEditingPromoId = id;
             document.getElementById('promoFormConfig').reset();
             const container = document.getElementById('promoProductsContainer'); container.innerHTML = '';
-            
             let selectedProds = [];
             if(id) {
                 document.getElementById('promoModalTitle').innerText = 'แก้ไขกฎส่วนลด';
@@ -634,14 +581,13 @@
                 document.getElementById('promoModalTitle').innerText = 'สร้างกฎส่วนลดใหม่';
                 selectedProds = products.map(p => p.id); 
             }
-
             if(products.length === 0) { container.innerHTML = '<p class="text-xs text-gray-400 p-2 text-center">ไม่มีสินค้าในระบบ</p>'; } 
             else {
                 products.forEach(p => {
                     const isChecked = selectedProds.includes(p.id) ? 'checked' : '';
                     container.innerHTML += `
-                        <label class="flex items-center gap-3 p-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-colors border border-gray-100">
-                            <input type="checkbox" value="${p.id}" class="promo-prod-cb w-4 h-4 text-teal-600 rounded border-gray-300 focus:ring-teal-500" ${isChecked}>
+                        <label class="flex items-center gap-3 p-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer border border-gray-100">
+                            <input type="checkbox" value="${p.id}" class="promo-prod-cb w-4 h-4 text-teal-600 rounded" ${isChecked}>
                             <span class="text-xs font-bold text-gray-700 truncate">${p.name}</span>
                         </label>
                     `;
@@ -667,18 +613,16 @@
             const th = parseFloat(document.getElementById('promoThreshold').value) || 0;
             const disc = parseFloat(document.getElementById('promoDiscount').value) || 0;
             if(th <= 0 || disc <= 0) return customAlert('เกิดข้อผิดพลาด', 'กรุณากรอกยอดเงินให้ถูกต้อง', 'error');
-            
             const selectedIds = [];
             document.querySelectorAll('.promo-prod-cb').forEach(cb => { if(cb.checked) selectedIds.push(parseInt(cb.value)); });
             if(selectedIds.length === 0) return customAlert('เกิดข้อผิดพลาด', 'กรุณาเลือกสินค้าที่ร่วมรายการอย่างน้อย 1 อย่าง', 'error');
 
             if(currentEditingPromoId) {
                 const idx = settings.promotions.findIndex(p => p.id === currentEditingPromoId);
-                settings.promotions[idx] = { ...settings.promotions[idx], name: name, threshold: th, discount: disc, products: selectedIds };
+                settings.promotions[idx] = { ...settings.promotions[idx], name, threshold: th, discount: disc, products: selectedIds };
             } else {
-                settings.promotions.push({ id: Date.now(), name: name, threshold: th, discount: disc, active: true, products: selectedIds });
+                settings.promotions.push({ id: Date.now(), name, threshold: th, discount: disc, active: true, products: selectedIds });
             }
-
             localStorage.setItem('posSettings_v11', JSON.stringify(settings));
             closePromoModal(); renderPromoList();
             customAlert('สำเร็จ', 'บันทึกกฎส่วนลดเรียบร้อยแล้ว', 'success');
@@ -692,7 +636,6 @@
             }, true);
         }
 
-        // ================= NAVIGATION =================
         function switchPage(pageId) {
             document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
@@ -712,10 +655,9 @@
 
         function getTotalStock(product) { return product.lots ? product.lots.reduce((sum, lot) => sum + lot.qty, 0) : 0; }
 
-        // ================= PRODUCTS =================
         function renderProductManagement() {
             const list = document.getElementById('manageProductList'); list.innerHTML = '';
-            if(products.length === 0) { list.innerHTML = '<div class="text-center p-10 border-2 border-dashed border-gray-200 rounded-[2rem] mt-4"><p class="text-gray-400 font-bold text-sm">ยังไม่มีสินค้า</p><p class="text-[10px] text-gray-300 mt-1">กด + เพิ่มสินค้า เพื่อเริ่มต้น</p></div>'; return; }
+            if(products.length === 0) { list.innerHTML = '<div class="text-center p-10 border-2 border-dashed border-gray-200 rounded-[2rem] mt-4"><p class="text-gray-400 font-bold text-sm">ยังไม่มีสินค้า</p></div>'; return; }
 
             products.forEach(p => {
                 const totalStock = getTotalStock(p);
@@ -734,18 +676,17 @@
                                 <h4 class="font-bold text-gray-800 text-lg line-clamp-1">${p.name}</h4>
                                 <div class="mt-1 flex items-baseline gap-1.5">
                                     <span class="text-sm font-black text-teal-600">฿${formatMoney(curPrice)}</span>
-                                    ${isDiscounted ? `<span class="text-[9px] text-gray-400 line-through">฿${formatMoney(p.price)}</span><span class="text-[8px] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md">-${p.discount}%</span>` : ''}
+                                    ${isDiscounted ? `<span class="text-[9px] text-gray-400 line-through">฿\${formatMoney(p.price)}</span><span class="text-[8px] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md">-\${p.discount}%</span>` : ''}
                                 </div>
                             </div>
                             <div class="text-[10px] font-bold px-3 py-2 rounded-xl border ${stockColor} text-center flex-shrink-0 flex flex-col justify-center uppercase tracking-widest">
                                 สต็อก<br><span class="text-xl leading-none mt-1 font-black">${formatInt(totalStock)}</span>
                             </div>
                         </div>
-                        
                         <div class="flex gap-2 border-t border-gray-50 pt-4 relative z-40">
-                            <button onclick="editProductBase(${p.id})" class="flex-1 text-[11px] text-gray-600 bg-gray-100 hover:bg-gray-200 py-2.5 rounded-xl font-bold transition-colors">✏️ แก้ไข</button>
-                            <button onclick="openLotModal(${p.id})" class="flex-1 text-[11px] text-white bg-gray-900 hover:bg-black py-2.5 rounded-xl font-bold shadow-sm transition-colors">📦 สต็อก/ทุน</button>
-                            <button onclick="deleteProduct(${p.id})" class="w-12 flex-shrink-0 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl flex items-center justify-center transition-colors">
+                            <button onclick="editProductBase(${p.id})" class="flex-1 text-[11px] text-gray-600 bg-gray-100 hover:bg-gray-200 py-2.5 rounded-xl font-bold">✏️ แก้ไข</button>
+                            <button onclick="openLotModal(${p.id})" class="flex-1 text-[11px] text-white bg-gray-900 hover:bg-black py-2.5 rounded-xl font-bold">📦 สต็อก/ทุน</button>
+                            <button onclick="deleteProduct(${p.id})" class="w-12 flex-shrink-0 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl flex items-center justify-center">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
                         </div>
@@ -779,7 +720,6 @@
             document.getElementById('prodPrice').value = p.price;
             document.getElementById('prodDiscountPercent').value = p.discount || '';
             document.getElementById('prodImageBase64').value = p.imageBase64 || '';
-            
             if(p.imageBase64) {
                 document.getElementById('imgPreview').src = p.imageBase64;
                 document.getElementById('imgPreview').classList.remove('hidden');
@@ -804,7 +744,7 @@
 
         function deleteProduct(id) {
             const p = products.find(x => x.id === id);
-            customAlert('ลบสินค้า?', `คุณต้องการลบ "${p.name}" ออกจากคลังใช่หรือไม่?\n\n*หมายเหตุ: สต็อกที่เหลือจะถูกลบทิ้ง และยอดเงินจะไม่ถูกคืนในบัญชี`, 'warning', () => {
+            customAlert('ลบสินค้า?', `คุณต้องการลบ "${p.name}" ออกจากคลังใช่หรือไม่?`, 'warning', () => {
                 products = products.filter(x => x.id !== id);
                 settings.promotions.forEach(promo => { promo.products = promo.products.filter(prodId => prodId !== id); });
                 localStorage.setItem('posProducts_v11', JSON.stringify(products));
@@ -813,7 +753,6 @@
             }, true);
         }
 
-        // ================= LOTS =================
         function openLotModal(productId) {
             currentEditingProductId = productId;
             document.getElementById('lotProductName').innerText = products.find(x => x.id === productId).name;
@@ -827,16 +766,16 @@
             if(!p.lots || p.lots.length === 0) { list.innerHTML = '<div class="text-center p-4 border border-dashed border-gray-200 rounded-xl"><p class="text-xs text-gray-400 font-bold">สินค้านี้ยังไม่มีสต็อก</p></div>'; return; }
 
             p.lots.sort((a,b) => new Date(a.date) - new Date(b.date)).forEach((lot, index) => {
-                const badge = index === 0 ? '<span class="text-[8px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded ml-2 font-bold uppercase tracking-widest">คิวขายถัดไป</span>' : '';
+                const badge = index === 0 ? '<span class="text-[8px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded ml-2 font-bold uppercase">คิวขายถัดไป</span>' : '';
                 list.innerHTML += `
                     <div class="bg-white p-3 rounded-2xl border border-gray-100 flex justify-between items-center shadow-sm">
                         <div>
-                            <p class="text-sm font-black text-gray-800">${formatInt(lot.qty)} <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ชิ้น</span> ${badge}</p>
-                            <p class="text-[9px] font-bold text-gray-400 mt-0.5 uppercase tracking-widest">ทุน ฿${formatMoney(lot.cost)} | 📅 ${new Date(lot.date).toLocaleDateString('th-TH')}</p>
+                            <p class="text-sm font-black text-gray-800">${formatInt(lot.qty)} <span class="text-[10px] font-bold text-gray-400 uppercase">ชิ้น</span> ${badge}</p>
+                            <p class="text-[9px] font-bold text-gray-400 mt-0.5 uppercase">ทุน ฿${formatMoney(lot.cost)} | 📅 ${new Date(lot.date).toLocaleDateString('th-TH')}</p>
                         </div>
-                        <div class="flex flex-col gap-1 relative z-40">
-                            <button onclick="editLot(${lot.id})" class="text-[9px] font-bold uppercase tracking-widest text-blue-500 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">แก้ไข</button>
-                            <button onclick="deleteLot(${lot.id})" class="text-[9px] font-bold uppercase tracking-widest text-red-500 bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors">ลบ</button>
+                        <div class="flex flex-col gap-1">
+                            <button onclick="editLot(${lot.id})" class="text-[9px] font-bold uppercase text-blue-500 bg-blue-50 px-3 py-1.5 rounded-lg">แก้ไข</button>
+                            <button onclick="deleteLot(${lot.id})" class="text-[9px] font-bold uppercase text-red-500 bg-red-50 px-3 py-1.5 rounded-lg">ลบ</button>
                         </div>
                     </div>
                 `;
@@ -848,7 +787,6 @@
             const qty = parseInt(document.getElementById('lotQty').value);
             const cost = parseFloat(document.getElementById('lotCost').value);
             const payMethod = document.querySelector('input[name="lotPayMethod"]:checked').value;
-            
             const pIdx = products.findIndex(x => x.id === currentEditingProductId);
             if(!products[pIdx].lots) products[pIdx].lots = [];
 
@@ -857,7 +795,6 @@
                 const l = products[pIdx].lots.find(x => x.id === currentEditingLotId);
                 oldQty = l.qty; oldCost = l.cost;
             }
-            
             const expenseAmount = (qty * cost) - (oldQty * oldCost); 
             if (expenseAmount > 0) { transactions.push({ id: Date.now(), type: 'expense', amount: expenseAmount, description: `ซื้อสต็อก: ${products[pIdx].name}`, date: new Date().toISOString(), paymentMethod: payMethod }); } 
             else if (expenseAmount < 0) { transactions.push({ id: Date.now(), type: 'sale', amount: Math.abs(expenseAmount), cost: 0, description: `คืนทุนแก้สต็อก: ${products[pIdx].name}`, date: new Date().toISOString(), paymentMethod: payMethod }); }
@@ -865,7 +802,7 @@
             if(currentEditingLotId) {
                 const lIdx = products[pIdx].lots.findIndex(x => x.id === currentEditingLotId);
                 products[pIdx].lots[lIdx].qty = qty; products[pIdx].lots[lIdx].cost = cost;
-            } else { products[pIdx].lots.push({ id: Date.now(), qty: qty, cost: cost, date: new Date().toISOString() }); }
+            } else { products[pIdx].lots.push({ id: Date.now(), qty, cost, date: new Date().toISOString() }); }
 
             localStorage.setItem('posProducts_v11', JSON.stringify(products)); localStorage.setItem('posTransactions_v11', JSON.stringify(transactions));
             resetLotForm(); renderLotList();
@@ -880,7 +817,7 @@
             document.getElementById('btnSaveLot').innerText = 'อัปเดต'; document.getElementById('btnCancelLot').classList.remove('hidden');
         }
         function deleteLot(lotId) {
-            customAlert('ลบสต็อก?', 'คุณต้องการลบล็อตสินค้านี้ใช่หรือไม่\n(เงินลงทุนจะไม่ถูกคืนกลับในบัญชี)', 'warning', () => {
+            customAlert('ลบสต็อก?', 'คุณต้องการลบล็อตสินค้านี้ใช่หรือไม่', 'warning', () => {
                 const pIdx = products.findIndex(x => x.id === currentEditingProductId);
                 products[pIdx].lots = products[pIdx].lots.filter(x => x.id !== lotId);
                 localStorage.setItem('posProducts_v11', JSON.stringify(products)); renderLotList();
@@ -892,10 +829,8 @@
             document.getElementById('btnSaveLot').innerText = 'บันทึกสต็อก'; document.getElementById('btnCancelLot').classList.add('hidden');
         }
 
-        // ================= POS =================
         function renderPOSProducts() {
             const list = document.getElementById('posProductList'); list.innerHTML = '';
-            
             products.forEach(p => {
                 const totalStock = getTotalStock(p);
                 const outOfStock = totalStock <= 0;
@@ -908,16 +843,12 @@
 
                 list.innerHTML += `
                     <div onclick="addToCart(${p.id})" class="rounded-[2rem] p-3 relative cursor-pointer select-none transition-all duration-200 overflow-hidden ${outOfStock ? 'opacity-50 grayscale' : ''} ${borderClass}">
-                        <div class="absolute top-0 left-0 bg-gray-900/80 backdrop-blur-md text-white text-[9px] font-bold px-3 py-1.5 rounded-br-xl z-10 shadow-sm uppercase tracking-wider">
-                            เหลือ ${formatInt(totalStock)}
-                        </div>
-                        ${isDiscounted ? `<div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-bl-xl z-10 shadow-sm">-\${p.discount}%</div>` : ''}
-                        ${cartQty > 0 ? `<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-teal-500/90 backdrop-blur-md text-white w-14 h-14 rounded-full flex items-center justify-center font-black text-2xl shadow-xl border-4 border-white z-20 modal-pop">\${cartQty}</div>` : ''}
-                        
+                        <div class="absolute top-0 left-0 bg-gray-900/80 backdrop-blur-md text-white text-[9px] font-bold px-3 py-1.5 rounded-br-xl z-10 uppercase">เหลือ ${formatInt(totalStock)}</div>
+                        ${isDiscounted ? `<div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-bl-xl z-10">-\${p.discount}%</div>` : ''}
+                        ${cartQty > 0 ? `<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-teal-500/90 text-white w-14 h-14 rounded-full flex items-center justify-center font-black text-2xl shadow-xl border-4 border-white z-20">\${cartQty}</div>` : ''}
                         <div class="h-28 w-full bg-gray-50 rounded-2xl mb-3 flex items-center justify-center overflow-hidden relative border border-gray-100">
                             <img src="${imgSrc}" class="${p.imageBase64 ? 'w-full h-full object-cover' : 'w-12 h-12'}">
                         </div>
-                        
                         <h4 class="font-bold text-gray-800 text-xs truncate text-center px-1">${p.name}</h4>
                         <div class="text-center mt-1 flex items-center justify-center gap-1.5">
                             ${isDiscounted ? `<span class="text-[10px] text-gray-400 line-through">฿\${formatMoney(p.price)}</span>` : ''}
@@ -950,7 +881,6 @@
             cart.forEach(item => { total += actualPrice(item.product) * item.quantity; qty += item.quantity; });
             document.getElementById('cartTotal').innerText = `${formatMoney(total)} ฿`;
             document.getElementById('cartCountBadge').innerText = `(${qty} ชิ้น)`;
-            
             const btnCheck = document.getElementById('btnCheckout');
             if(qty > 0) {
                 btnCheck.classList.remove('bg-gray-300', 'cursor-not-allowed', 'pointer-events-none');
@@ -961,33 +891,22 @@
             }
         }
 
-        // ================= CHECKOUT =================
         let cartSubtotal = 0;
         let calculatedPromoDiscount = 0;
         let activePromosInfo = [];
 
         function openCheckoutModal() {
             if(cart.length === 0) return;
-            
-            const list = document.getElementById('checkoutItemsList'); 
-            list.innerHTML = '';
+            const list = document.getElementById('checkoutItemsList'); list.innerHTML = '';
             cartSubtotal = 0;
-            
             const activeRules = settings.promotions ? settings.promotions.filter(p => p.active) : [];
-            let ruleAccumulators = {}; 
-            activeRules.forEach(r => ruleAccumulators[r.id] = 0);
+            let ruleAccumulators = {}; activeRules.forEach(r => ruleAccumulators[r.id] = 0);
 
             cart.forEach(item => {
                 const curPrice = actualPrice(item.product);
                 const rowTotal = curPrice * item.quantity;
                 cartSubtotal += rowTotal;
-                
-                activeRules.forEach(r => {
-                    if(r.products.includes(item.product.id)) { 
-                        ruleAccumulators[r.id] += rowTotal; 
-                    }
-                });
-
+                activeRules.forEach(r => { if(r.products.includes(item.product.id)) { ruleAccumulators[r.id] += rowTotal; } });
                 list.innerHTML += `
                     <div class="flex justify-between items-center py-2 border-b border-gray-50 border-dashed last:border-0">
                         <span class="text-gray-800 text-sm font-bold flex items-center">${item.product.name} <span class="text-teal-600 font-black ml-2 text-[10px] bg-teal-50 px-2 py-0.5 rounded-full">x${item.quantity}</span></span>
@@ -997,23 +916,18 @@
             });
 
             document.getElementById('checkoutSubtotal').innerText = `${formatMoney(cartSubtotal)} ฿`;
-            
             calculatedPromoDiscount = 0;
             activePromosInfo = [];
             let bestPromo = null;
 
             activeRules.forEach(r => {
                 if(ruleAccumulators[r.id] >= r.threshold) {
-                    if(r.discount > calculatedPromoDiscount) {
-                        calculatedPromoDiscount = r.discount;
-                        bestPromo = r;
-                    }
+                    if(r.discount > calculatedPromoDiscount) { calculatedPromoDiscount = r.discount; bestPromo = r; }
                 }
             });
 
             const promoContainer = document.getElementById('appliedPromosContainer');
             promoContainer.innerHTML = ''; 
-
             if (bestPromo) {
                 activePromosInfo.push(bestPromo.name);
                 promoContainer.innerHTML = `
@@ -1039,9 +953,7 @@
                 document.getElementById('qrPaymentImg').classList.add('hidden');
                 document.getElementById('noQrMsg').classList.remove('hidden');
             }
-
-            togglePayMethod(); 
-            document.getElementById('checkoutModal').classList.remove('hidden');
+            togglePayMethod(); document.getElementById('checkoutModal').classList.remove('hidden');
         }
         function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); }
 
@@ -1049,12 +961,8 @@
             const method = document.querySelector('input[name="payMethod"]:checked').value;
             const cashSection = document.getElementById('cashInputSection');
             const qrSection = document.getElementById('qrDisplaySection');
-            
-            if(method === 'transfer') {
-                cashSection.classList.add('hidden'); qrSection.classList.remove('hidden');
-            } else {
-                cashSection.classList.remove('hidden'); qrSection.classList.add('hidden');
-            }
+            if(method === 'transfer') { cashSection.classList.add('hidden'); qrSection.classList.remove('hidden'); } 
+            else { cashSection.classList.remove('hidden'); qrSection.classList.add('hidden'); }
             calculateChange();
         }
 
@@ -1062,16 +970,14 @@
             const manualDiscount = Math.max(0, Math.min(parseFloat(document.getElementById('manualDiscount').value) || 0, cartSubtotal)); 
             const totalDiscount = manualDiscount + calculatedPromoDiscount;
             const finalAmount = Math.max(0, cartSubtotal - totalDiscount);
-            
             document.getElementById('finalTotal').innerText = `${formatMoney(finalAmount)} ฿`;
 
             const method = document.querySelector('input[name="payMethod"]:checked').value;
             const btn = document.getElementById('confirmPayBtn');
             btn.innerText = `ยืนยันชำระเงิน ${formatMoney(finalAmount)} ฿`;
 
-            if(method === 'transfer') {
-                btn.disabled = false;
-            } else {
+            if(method === 'transfer') { btn.disabled = false; } 
+            else {
                 const cash = parseFloat(document.getElementById('cashReceived').value) || 0;
                 const change = cash - finalAmount;
                 if(change >= 0) {
@@ -1098,7 +1004,6 @@
                     itemDescArr.push(`${cartItem.product.name}(${cartItem.quantity})`);
                     const pIndex = products.findIndex(p => p.id === cartItem.product.id);
                     let qtyToDeduct = cartItem.quantity;
-                    
                     products[pIndex].lots.sort((a,b) => new Date(a.date) - new Date(b.date));
                     for (let i = 0; i < products[pIndex].lots.length && qtyToDeduct > 0; i++) {
                         let lot = products[pIndex].lots[i];
@@ -1118,7 +1023,7 @@
                 transactions.push({
                     id: Date.now(), type: 'sale', amount: finalAmount, cost: totalCostOfThisBill, 
                     description: desc, date: new Date().toISOString(), paymentMethod: method,
-                    cartData: JSON.parse(JSON.stringify(cart)) // บันทึกข้อมูลตะกร้าไว้สำหรับระบบคืนสต็อก
+                    cartData: JSON.parse(JSON.stringify(cart))
                 });
 
                 localStorage.setItem('posTransactions_v11', JSON.stringify(transactions));
@@ -1132,12 +1037,10 @@
             }
         }
 
-        // ================= เปิด-ปิด โมดัล (ปุ่มเบิกเงิน/รายจ่าย) และ แก้ไขรายการ =================
         function openTransactionModal(type) {
             document.getElementById('txForm').reset();
             document.getElementById('txType').value = type;
-            document.getElementById('editTxId').value = ''; // รีเซ็ต ID ทุกครั้งที่เปิดสร้างใหม่
-            
+            document.getElementById('editTxId').value = '';
             const title = document.getElementById('txModalTitle');
             const icon = document.getElementById('txModalIcon');
             const btn = document.getElementById('btnSaveTx');
@@ -1147,13 +1050,13 @@
                 icon.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-2 bg-purple-50 text-purple-500';
                 icon.innerHTML = '🏧';
                 document.getElementById('txDesc').placeholder = 'เช่น ซื้อของเข้าร้าน, ใช้ส่วนตัว';
-                btn.className = 'w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 rounded-2xl shadow-[0_8px_20px_rgba(168,85,247,0.3)] transition-all text-lg mt-4';
+                btn.className = 'w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 rounded-2xl shadow-lg text-lg mt-4';
             } else {
                 title.innerText = 'บันทึกรายจ่ายร้าน';
                 icon.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-2 bg-orange-50 text-orange-500';
                 icon.innerHTML = '💸';
                 document.getElementById('txDesc').placeholder = 'เช่น ค่าไฟ, ค่าเช่าที่';
-                btn.className = 'w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-2xl shadow-[0_8px_20px_rgba(249,115,22,0.3)] transition-all text-lg mt-4';
+                btn.className = 'w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-2xl shadow-lg text-lg mt-4';
             }
             document.getElementById('transactionModal').classList.remove('hidden'); 
         }
@@ -1161,11 +1064,9 @@
         function editTransaction(id) {
             const tx = transactions.find(t => t.id === id);
             if(!tx) return;
-            
             document.getElementById('txForm').reset();
             document.getElementById('txType').value = tx.type;
             document.getElementById('editTxId').value = tx.id;
-            
             const title = document.getElementById('txModalTitle');
             const icon = document.getElementById('txModalIcon');
             const btn = document.getElementById('btnSaveTx');
@@ -1178,47 +1079,38 @@
                 title.innerText = 'แก้ไขรายการเบิกเงิน';
                 icon.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-2 bg-purple-50 text-purple-500';
                 icon.innerHTML = '🏧';
-                btn.className = 'w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all text-lg mt-4';
+                btn.className = 'w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 rounded-2xl shadow-lg text-lg mt-4';
             } else if(tx.type === 'expense') {
                 title.innerText = 'แก้ไขรายจ่าย';
                 icon.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-2 bg-orange-50 text-orange-500';
                 icon.innerHTML = '💸';
-                btn.className = 'w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all text-lg mt-4';
+                btn.className = 'w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-2xl shadow-lg text-lg mt-4';
             } else if(tx.type === 'sale') {
-                title.innerText = 'แก้ไขรายการขาย (ยอดเงิน/ช่องทาง)';
+                title.innerText = 'แก้ไขรายการขาย';
                 icon.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-2 bg-blue-50 text-blue-500';
                 icon.innerHTML = '🏪';
-                btn.className = 'w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all text-lg mt-4';
+                btn.className = 'w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg text-lg mt-4';
             }
-            
             document.getElementById('transactionModal').classList.remove('hidden');
         }
 
         function cancelTransaction(id) {
             const tx = transactions.find(t => t.id === id);
             if(!tx) return;
-            
             let msg = 'คุณต้องการลบ / ยกเลิกรายการนี้ใช่หรือไม่?';
             if(tx.type === 'sale') msg += '\n(สต็อกสินค้าจากรายการขายนี้ จะถูกดึงกลับเข้าคลังอัตโนมัติ)';
             
             customAlert('ยืนยันการยกเลิก', msg, 'warning', () => {
-                // ระบบคืนสต็อกหากเป็นรายการขาย
                 if(tx.type === 'sale' && tx.cartData) {
                     tx.cartData.forEach(item => {
                         const pIdx = products.findIndex(p => p.id === item.product.id);
                         if(pIdx > -1) {
                             if(!products[pIdx].lots) products[pIdx].lots = [];
-                            products[pIdx].lots.push({
-                                id: Date.now() + Math.random(),
-                                qty: item.quantity,
-                                cost: 0, // ตั้งต้นทุน 0 ไว้เพื่อไม่ให้กระทบกำไรย้อนหลังซับซ้อนเกินไป
-                                date: new Date().toISOString()
-                            });
+                            products[pIdx].lots.push({ id: Date.now() + Math.random(), qty: item.quantity, cost: 0, date: new Date().toISOString() });
                         }
                     });
                     localStorage.setItem('posProducts_v11', JSON.stringify(products));
                 }
-                
                 transactions = transactions.filter(t => t.id !== id);
                 localStorage.setItem('posTransactions_v11', JSON.stringify(transactions));
                 updateDashboard();
@@ -1234,34 +1126,20 @@
             const editId = document.getElementById('editTxId').value;
             let desc = document.getElementById('txDesc').value;
             if(type === 'withdraw' && !desc.startsWith('[เบิกเงิน]')) { desc = `[เบิกเงิน] ` + desc; }
-            
             const amount = parseFloat(document.getElementById('txAmount').value);
             const payMethod = document.querySelector('input[name="txPayMethod"]:checked').value;
 
             if (editId) {
-                // อัปเดตข้อมูลรายการเดิม
                 const idx = transactions.findIndex(t => t.id == editId);
-                if(idx > -1) {
-                    transactions[idx].description = desc;
-                    transactions[idx].amount = amount;
-                    transactions[idx].paymentMethod = payMethod;
-                }
+                if(idx > -1) { transactions[idx].description = desc; transactions[idx].amount = amount; transactions[idx].paymentMethod = payMethod; }
             } else {
-                // เพิ่มรายการใหม่
-                transactions.push({
-                    id: Date.now(), type: type,
-                    amount: amount,
-                    description: desc, date: new Date().toISOString(),
-                    paymentMethod: payMethod
-                });
+                transactions.push({ id: Date.now(), type, amount, description: desc, date: new Date().toISOString(), paymentMethod: payMethod });
             }
-            
             localStorage.setItem('posTransactions_v11', JSON.stringify(transactions));
             closeTransactionModal(); updateDashboard();
             customAlert('บันทึกสำเร็จ', 'อัปเดตข้อมูลเรียบร้อยแล้ว', 'success');
         });
 
-        // ================= DASHBOARD & CHARTS =================
         function toggleHistoryView() {
             showAllHistory = !showAllHistory;
             document.getElementById('btnToggleHistory').innerText = showAllHistory ? 'ดูเฉพาะวันนี้' : 'ดูทั้งหมด';
@@ -1272,7 +1150,6 @@
             let totalSales = 0, totalCostFromSales = 0, totalExpenses = 0, totalWithdrawals = 0;
             let cashIn = 0, cashOut = 0, transferIn = 0, transferOut = 0;
 
-            // 1. คำนวณยอดเงินรวมทั้งหมดจากธุรกรรม *ทั้งหมด*
             transactions.forEach(t => {
                 const isCash = t.paymentMethod === 'cash';
                 if(t.type === 'sale') {
@@ -1285,10 +1162,7 @@
                 }
             });
 
-            // 2. กรองและแสดงผลประวัติตามปุ่ม "ดูทั้งหมด" / "ดูเฉพาะวันนี้"
-            const list = document.getElementById('historyList'); 
-            list.innerHTML = '';
-            
+            const list = document.getElementById('historyList'); list.innerHTML = '';
             const todayStr = new Date().toDateString();
             const listToRender = [...transactions]
                 .filter(t => showAllHistory || new Date(t.date).toDateString() === todayStr)
@@ -1297,19 +1171,11 @@
             listToRender.forEach(t => {
                 const isCash = t.paymentMethod === 'cash';
                 const methodIcon = isCash ? '💵' : '🏦';
-                
-                let bgIcon = 'bg-blue-50 text-blue-500';
-                let textAmountClass = 'text-blue-600';
-                let amountPrefix = '+';
-                
+                let bgIcon = 'bg-blue-50 text-blue-500', textAmountClass = 'text-blue-600', amountPrefix = '+';
                 if (t.type === 'expense' || t.type === 'withdraw') {
                     amountPrefix = '-';
-                    bgIcon = 'bg-orange-50 text-orange-500';
-                    textAmountClass = 'text-orange-500';
-                    if (t.type === 'withdraw') {
-                        bgIcon = 'bg-purple-50 text-purple-500';
-                        textAmountClass = 'text-purple-500';
-                    }
+                    bgIcon = t.type === 'withdraw' ? 'bg-purple-50 text-purple-500' : 'bg-orange-50 text-orange-500';
+                    textAmountClass = t.type === 'withdraw' ? 'text-purple-500' : 'text-orange-500';
                 }
 
                 list.innerHTML += `
@@ -1319,30 +1185,28 @@
                                 <div class="w-10 h-10 rounded-xl ${bgIcon} flex items-center justify-center shadow-sm">${methodIcon}</div>
                                 <div>
                                     <p class="text-xs font-bold text-gray-800 line-clamp-1">${t.description}</p>
-                                    <p class="text-[9px] font-bold text-gray-400 mt-0.5 uppercase tracking-widest">${new Date(t.date).toLocaleString('th-TH')}</p>
+                                    <p class="text-[9px] font-bold text-gray-400 mt-0.5 uppercase">${new Date(t.date).toLocaleString('th-TH')}</p>
                                 </div>
                             </div>
                             <p class="font-black ${textAmountClass} text-sm whitespace-nowrap">${amountPrefix} ฿${formatMoney(t.amount)}</p>
                         </div>
-                        <div class="flex justify-end gap-2 border-t border-gray-100 pt-2.5">
-                            <button onclick="editTransaction(${t.id})" class="text-[10px] bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg font-bold transition-colors">✏️ แก้ไข</button>
-                            <button onclick="cancelTransaction(${t.id})" class="text-[10px] bg-red-50 hover:bg-red-100 text-red-500 px-3 py-1.5 rounded-lg font-bold transition-colors">🗑️ ยกเลิก</button>
+                        <div class="flex justify-end gap-2 border-t border-gray-100 pt-2">
+                            <button onclick="editTransaction(${t.id})" class="text-[10px] bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg font-bold">✏️ แก้ไข</button>
+                            <button onclick="cancelTransaction(${t.id})" class="text-[10px] bg-red-50 hover:bg-red-100 text-red-500 px-3 py-1.5 rounded-lg font-bold">🗑️ ยกเลิก</button>
                         </div>
                     </div>
                 `;
             });
 
             if(listToRender.length === 0) {
-                list.innerHTML = '<div class="text-center p-6 text-gray-400 text-[10px] font-bold uppercase tracking-widest border-2 border-dashed border-gray-100 rounded-2xl mt-2">ไม่มีประวัติการทำรายการ</div>';
+                list.innerHTML = '<div class="text-center p-6 text-gray-400 text-[10px] font-bold uppercase border-2 border-dashed border-gray-100 rounded-2xl mt-2">ไม่มีประวัติการทำรายการ</div>';
             }
 
             const netProfit = totalSales - totalCostFromSales - totalExpenses;
             const cashBalance = cashIn - cashOut;
             const bankBalance = transferIn - transferOut;
             const totalBalance = cashBalance + bankBalance;
-
-            let inventoryValue = 0;
-            products.forEach(p => { inventoryValue += (getTotalStock(p) * actualPrice(p)); });
+            let inventoryValue = 0; products.forEach(p => { inventoryValue += (getTotalStock(p) * actualPrice(p)); });
 
             document.getElementById('displaySales').innerText = formatMoney(totalSales);
             document.getElementById('displayExpenses').innerText = formatMoney(totalExpenses);
@@ -1359,29 +1223,24 @@
         function renderChart(sales, cogs, expenses) {
             const ctx = document.getElementById('financeChart').getContext('2d');
             const noDataMsg = document.getElementById('noDataMsg');
-            
             if (myChart) myChart.destroy();
             if (sales === 0 && cogs === 0 && expenses === 0) {
                 noDataMsg.classList.remove('hidden'); document.getElementById('financeChart').style.display = 'none'; return;
             } else {
                 noDataMsg.classList.add('hidden'); document.getElementById('financeChart').style.display = 'block';
             }
-
             myChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['ยอดขาย', 'ต้นทุนขาย', 'รายจ่ายอื่น'],
                     datasets: [{ data: [sales, cogs, expenses], backgroundColor: ['#3b82f6', '#f43f5e', '#f97316'], borderWidth: 0, hoverOffset: 4 }]
                 },
-                options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '75%',
-                    plugins: { legend: { position: 'right', labels: { usePointStyle: true, padding: 15, font: { family: "'Prompt', sans-serif", size: 10, weight: 'bold' } } } }
-                }
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right', labels: { usePointStyle: true, padding: 15, font: { family: "'Prompt', sans-serif", size: 10, weight: 'bold' } } } } }
             });
         }
 
         function clearTransactions() {
-            customAlert('ล้างประวัติบัญชี?', 'ยอดเงินทั้งหมดจะกลับเป็น 0\n(สต็อกและโปรโมชันจะยังอยู่เหมือนเดิม)', 'warning', () => {
+            customAlert('ล้างประวัติบัญชี?', 'ยอดเงินทั้งหมดจะกลับเป็น 0', 'warning', () => {
                 transactions = []; localStorage.removeItem('posTransactions_v11'); updateDashboard();
             }, true);
         }
