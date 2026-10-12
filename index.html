@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snack Shop</title>
+    <title>Snack Shop </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -108,12 +108,16 @@
                     </div>
                 </div>
                 
+                <!-- อัปเดตส่วน History (ประวัติล่าสุด) -->
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative z-30">
                     <div class="flex justify-between items-center p-4 border-b border-gray-50">
-                        <h3 class="text-sm font-bold text-gray-800">ประวัติล่าสุด</h3>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-bold text-gray-800">ประวัติล่าสุด</h3>
+                            <button id="btnToggleHistory" onclick="toggleHistoryView()" class="text-[9px] bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-bold transition-colors hover:bg-gray-200">ดูทั้งหมด</button>
+                        </div>
                         <button onclick="clearTransactions()" class="text-[9px] uppercase tracking-wider text-red-500 font-bold bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors relative z-40 cursor-pointer">ล้างบัญชี</button>
                     </div>
-                    <div id="historyList" class="p-2 space-y-1 max-h-56 overflow-y-auto"></div>
+                    <div id="historyList" class="p-2 max-h-64 overflow-y-auto"></div>
                 </div>
             </main>
         </div>
@@ -214,14 +218,12 @@
         <div id="checkoutModal" class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-3">
             <div class="bg-white rounded-[2rem] p-5 w-full max-w-[380px] shadow-2xl modal-pop relative max-h-[85vh] overflow-y-auto">
                 
-                <!-- ปุ่มปิด -->
                 <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 bg-gray-100 text-gray-500 rounded-full p-2 hover:bg-gray-200">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
                 
                 <h3 class="text-lg font-black text-center mb-3 text-gray-800 tracking-tight">รับชำระเงิน</h3>
                 
-                <!-- สรุปรายการสินค้า -->
                 <div class="bg-gray-50 p-3 rounded-2xl mb-3 border border-gray-100">
                     <div id="checkoutItemsList" class="space-y-1.5 mb-2 text-sm font-medium"></div>
                     <div class="flex justify-between items-center pt-2 border-t border-dashed border-gray-300">
@@ -230,22 +232,18 @@
                     </div>
                 </div>
 
-                <!-- คอนเทนเนอร์แสดงโปรโมชันอัตโนมัติ -->
                 <div id="appliedPromosContainer" class="space-y-2 mb-3"></div>
 
-                <!-- กรอกส่วนลดเพิ่มเติม -->
                 <div class="flex justify-between items-center bg-gray-50 p-3 rounded-2xl border border-gray-200 mb-3 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-50 transition-all">
                     <span class="font-bold text-gray-500 text-[10px] uppercase tracking-wider">ลดพิเศษ (บาท)</span>
                     <input type="number" id="manualDiscount" oninput="calculateChange()" class="w-24 text-right bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none font-black text-base text-blue-600 pb-1 placeholder-gray-300" placeholder="0">
                 </div>
 
-                <!-- ยอดสุทธิ -->
                 <div class="flex justify-between items-center mb-4 bg-teal-50 p-4 rounded-[1.5rem] border border-teal-100">
                     <span class="font-black text-teal-800 text-sm">ยอดสุทธิ</span>
                     <span class="text-3xl font-black text-teal-600" id="finalTotal">0.00 ฿</span>
                 </div>
 
-                <!-- เลือกวิธีชำระเงิน -->
                 <div class="mb-4">
                     <div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-2xl">
                         <label class="cursor-pointer relative">
@@ -259,7 +257,6 @@
                     </div>
                 </div>
 
-                <!-- ส่วนรับเงินสด -->
                 <div id="cashInputSection" class="mb-4 bg-white p-4 rounded-[1.5rem] border border-gray-200 shadow-sm">
                     <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">รับเงินจากลูกค้า (บาท)</label>
                     <input type="number" id="cashReceived" oninput="calculateChange()" class="w-full text-right px-4 py-2.5 rounded-xl border border-gray-200 focus:border-teal-500 outline-none text-2xl font-black text-gray-800 bg-gray-50 placeholder-gray-200" placeholder="0">
@@ -269,7 +266,6 @@
                     </div>
                 </div>
 
-                <!-- ส่วนแสดง QR Code -->
                 <div id="qrDisplaySection" class="hidden mb-4 flex flex-col items-center justify-center p-4 bg-gray-50 rounded-[1.5rem] border border-gray-200">
                     <h4 class="font-bold text-gray-800 text-xs mb-2">สแกน QR เพื่อโอนเงิน</h4>
                     <div class="w-32 h-32 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center overflow-hidden mb-2 p-2">
@@ -278,7 +274,6 @@
                     </div>
                 </div>
 
-                <!-- ปุ่มยืนยัน -->
                 <button id="confirmPayBtn" onclick="processCheckout()" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 rounded-xl shadow-lg disabled:opacity-50 text-base relative z-40 cursor-pointer transition-colors">
                     ยืนยันชำระเงิน
                 </button>
@@ -310,7 +305,6 @@
                                 <input type="number" id="prodPrice" required min="0" step="0.01" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:border-teal-500 outline-none font-black text-teal-600 text-lg text-center">
                             </div>
                             <div>
-                                <!-- เปลี่ยนส่วนลดสินค้าเป็นเปอร์เซ็นต์ -->
                                 <label class="block text-[10px] font-bold text-red-400 uppercase tracking-widest mb-1 pl-1">ลดราคา (%)</label>
                                 <input type="number" id="prodDiscountPercent" min="0" max="100" step="0.01" placeholder="0" class="w-full bg-red-50 border border-red-100 rounded-xl px-4 py-3 focus:border-red-500 outline-none font-black text-red-500 text-lg text-center placeholder-red-200">
                             </div>
@@ -368,7 +362,7 @@
             </div>
         </div>
 
-        <!-- Modal: บันทึกรายการ (รายจ่าย/เบิกเงิน) -->
+        <!-- Modal: บันทึกรายการ/แก้ไข (รายจ่าย/เบิกเงิน/ขาย) -->
         <div id="transactionModal" class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 max-w-md mx-auto">
             <div class="bg-white rounded-[2.5rem] p-6 w-full shadow-2xl modal-pop relative">
                 <button onclick="closeTransactionModal()" class="absolute top-4 right-4 bg-gray-50 text-gray-400 rounded-full p-2 hover:bg-gray-100"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -379,6 +373,9 @@
                 
                 <form id="txForm" class="space-y-4">
                     <input type="hidden" id="txType" value="expense">
+                    <!-- เพิ่ม input ซ่อนสำหรับเก็บ ID ตอนกดแก้ไข -->
+                    <input type="hidden" id="editTxId" value=""> 
+                    
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 pl-2">รายละเอียดรายการ</label>
                         <input type="text" id="txDesc" required class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-800 outline-none font-bold text-sm text-center" placeholder="...">
@@ -388,7 +385,7 @@
                         <input type="number" id="txAmount" required min="1" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-800 outline-none font-black text-3xl text-gray-900 text-center" placeholder="0">
                     </div>
                     <div class="pt-2">
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">ดึงเงินจากกระเป๋า</label>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">ช่องทางกระเป๋าเงิน</label>
                         <div class="flex gap-2">
                             <label class="flex-1 cursor-pointer relative">
                                 <input type="radio" name="txPayMethod" value="cash" class="peer sr-only" checked>
@@ -462,10 +459,11 @@
         let currentEditingLotId = null;
         let currentEditingPromoId = null;
         let myChart = null;
+        let showAllHistory = false; // สำหรับสลับดูประวัติทั้งหมด
 
         const formatMoney = (num) => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
         const formatInt = (num) => new Intl.NumberFormat('th-TH').format(num);
-        // คำนวณราคาหลังจากหักเปอร์เซ็นต์ส่วนลด
+        
         const actualPrice = (p) => {
             const discountPercent = p.discount || 0;
             const discountAmount = p.price * (discountPercent / 100);
@@ -736,7 +734,7 @@
                                 <h4 class="font-bold text-gray-800 text-lg line-clamp-1">${p.name}</h4>
                                 <div class="mt-1 flex items-baseline gap-1.5">
                                     <span class="text-sm font-black text-teal-600">฿${formatMoney(curPrice)}</span>
-                                    ${isDiscounted ? `<span class="text-[9px] text-gray-400 line-through">฿\${formatMoney(p.price)}</span><span class="text-[8px] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md">-\${p.discount}%</span>` : ''}
+                                    ${isDiscounted ? `<span class="text-[9px] text-gray-400 line-through">฿${formatMoney(p.price)}</span><span class="text-[8px] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md">-${p.discount}%</span>` : ''}
                                 </div>
                             </div>
                             <div class="text-[10px] font-bold px-3 py-2 rounded-xl border ${stockColor} text-center flex-shrink-0 flex flex-col justify-center uppercase tracking-widest">
@@ -963,98 +961,88 @@
             }
         }
 
-        // ================= CHECKOUT & 결제 =================
+        // ================= CHECKOUT =================
         let cartSubtotal = 0;
         let calculatedPromoDiscount = 0;
         let activePromosInfo = [];
 
-       function openCheckoutModal() {
-    // 1. ตรวจสอบว่ามีสินค้าในตะกร้าหรือไม่ ถ้าไม่มีให้หยุดการทำงาน
-    if(cart.length === 0) return;
-    
-    const list = document.getElementById('checkoutItemsList'); 
-    list.innerHTML = '';
-    cartSubtotal = 0;
-    
-    // 2. ดึงโปรโมชันที่เปิดใช้งานอยู่
-    const activeRules = settings.promotions ? settings.promotions.filter(p => p.active) : [];
-    let ruleAccumulators = {}; 
-    activeRules.forEach(r => ruleAccumulators[r.id] = 0);
+        function openCheckoutModal() {
+            if(cart.length === 0) return;
+            
+            const list = document.getElementById('checkoutItemsList'); 
+            list.innerHTML = '';
+            cartSubtotal = 0;
+            
+            const activeRules = settings.promotions ? settings.promotions.filter(p => p.active) : [];
+            let ruleAccumulators = {}; 
+            activeRules.forEach(r => ruleAccumulators[r.id] = 0);
 
-    // 3. คำนวณยอดรวมและตรวจสอบสินค้าที่ตรงเงื่อนไขโปรโมชัน
-    cart.forEach(item => {
-        const curPrice = actualPrice(item.product);
-        const rowTotal = curPrice * item.quantity;
-        cartSubtotal += rowTotal;
-        
-        activeRules.forEach(r => {
-            if(r.products.includes(item.product.id)) { 
-                ruleAccumulators[r.id] += rowTotal; 
+            cart.forEach(item => {
+                const curPrice = actualPrice(item.product);
+                const rowTotal = curPrice * item.quantity;
+                cartSubtotal += rowTotal;
+                
+                activeRules.forEach(r => {
+                    if(r.products.includes(item.product.id)) { 
+                        ruleAccumulators[r.id] += rowTotal; 
+                    }
+                });
+
+                list.innerHTML += `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-50 border-dashed last:border-0">
+                        <span class="text-gray-800 text-sm font-bold flex items-center">${item.product.name} <span class="text-teal-600 font-black ml-2 text-[10px] bg-teal-50 px-2 py-0.5 rounded-full">x${item.quantity}</span></span>
+                        <span class="font-black text-gray-800 text-sm">${formatMoney(rowTotal)} ฿</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('checkoutSubtotal').innerText = `${formatMoney(cartSubtotal)} ฿`;
+            
+            calculatedPromoDiscount = 0;
+            activePromosInfo = [];
+            let bestPromo = null;
+
+            activeRules.forEach(r => {
+                if(ruleAccumulators[r.id] >= r.threshold) {
+                    if(r.discount > calculatedPromoDiscount) {
+                        calculatedPromoDiscount = r.discount;
+                        bestPromo = r;
+                    }
+                }
+            });
+
+            const promoContainer = document.getElementById('appliedPromosContainer');
+            promoContainer.innerHTML = ''; 
+
+            if (bestPromo) {
+                activePromosInfo.push(bestPromo.name);
+                promoContainer.innerHTML = `
+                    <div class="flex justify-between items-center bg-green-50 px-5 py-4 rounded-3xl border border-green-200 shadow-sm">
+                        <div>
+                            <span class="font-black text-green-700 text-sm flex items-center gap-1">🌟 ${bestPromo.name}</span>
+                            <p class="text-[9px] text-green-600 font-bold uppercase tracking-widest mt-0.5">ระบบเลือกโปรคุ้มที่สุดให้อัตโนมัติ</p>
+                        </div>
+                        <span class="font-black text-green-600 text-xl">- ฿${formatMoney(calculatedPromoDiscount)}</span>
+                    </div>
+                `;
             }
-        });
 
-        // สร้างรายการสินค้าในหน้าต่างชำระเงิน
-        list.innerHTML += `
-            <div class="flex justify-between items-center py-2 border-b border-gray-50 border-dashed last:border-0">
-                <span class="text-gray-800 text-sm font-bold flex items-center">${item.product.name} <span class="text-teal-600 font-black ml-2 text-[10px] bg-teal-50 px-2 py-0.5 rounded-full">x${item.quantity}</span></span>
-                <span class="font-black text-gray-800 text-sm">${formatMoney(rowTotal)} ฿</span>
-            </div>
-        `;
-    });
+            document.getElementById('manualDiscount').value = '';
+            document.getElementById('cashReceived').value = '';
+            document.querySelector('input[name="payMethod"][value="cash"]').checked = true;
 
-    document.getElementById('checkoutSubtotal').innerText = `${formatMoney(cartSubtotal)} ฿`;
-    
-    // 4. หาโปรโมชันที่คุ้มค่าที่สุด (ลดเยอะที่สุด)
-    calculatedPromoDiscount = 0;
-    activePromosInfo = [];
-    let bestPromo = null;
-
-    activeRules.forEach(r => {
-        if(ruleAccumulators[r.id] >= r.threshold) {
-            if(r.discount > calculatedPromoDiscount) {
-                calculatedPromoDiscount = r.discount;
-                bestPromo = r;
+            if (settings.qrCodeBase64) {
+                document.getElementById('qrPaymentImg').src = settings.qrCodeBase64;
+                document.getElementById('qrPaymentImg').classList.remove('hidden');
+                document.getElementById('noQrMsg').classList.add('hidden');
+            } else {
+                document.getElementById('qrPaymentImg').classList.add('hidden');
+                document.getElementById('noQrMsg').classList.remove('hidden');
             }
+
+            togglePayMethod(); 
+            document.getElementById('checkoutModal').classList.remove('hidden');
         }
-    });
-
-    // 5. แสดงกล่องโปรโมชันอัตโนมัติ (ลบส่วนที่ทำให้เกิด Error ออกแล้ว)
-    const promoContainer = document.getElementById('appliedPromosContainer');
-    promoContainer.innerHTML = ''; // ล้างข้อมูลเก่าก่อนเสมอ
-
-    if (bestPromo) {
-        activePromosInfo.push(bestPromo.name);
-        // ถ้าระบบเจอโปรที่คุ้มที่สุด จะวาดกล่องสีเขียวแสดงส่วนลด
-        promoContainer.innerHTML = `
-            <div class="flex justify-between items-center bg-green-50 px-5 py-4 rounded-3xl border border-green-200 shadow-sm">
-                <div>
-                    <span class="font-black text-green-700 text-sm flex items-center gap-1">🌟 ${bestPromo.name}</span>
-                    <p class="text-[9px] text-green-600 font-bold uppercase tracking-widest mt-0.5">ระบบเลือกโปรคุ้มที่สุดให้อัตโนมัติ</p>
-                </div>
-                <span class="font-black text-green-600 text-xl">- ฿${formatMoney(calculatedPromoDiscount)}</span>
-            </div>
-        `;
-    }
-
-    // 6. รีเซ็ตค่า Input ต่างๆ ในหน้าต่างชำระเงินให้เป็นค่าเริ่มต้น
-    document.getElementById('manualDiscount').value = '';
-    document.getElementById('cashReceived').value = '';
-    document.querySelector('input[name="payMethod"][value="cash"]').checked = true;
-
-    // 7. จัดการแสดงผล QR Code 
-    if (settings.qrCodeBase64) {
-        document.getElementById('qrPaymentImg').src = settings.qrCodeBase64;
-        document.getElementById('qrPaymentImg').classList.remove('hidden');
-        document.getElementById('noQrMsg').classList.add('hidden');
-    } else {
-        document.getElementById('qrPaymentImg').classList.add('hidden');
-        document.getElementById('noQrMsg').classList.remove('hidden');
-    }
-
-    // 8. อัปเดตหน้าจอเงินทอนและเปิดหน้าต่าง Modal
-    togglePayMethod(); 
-    document.getElementById('checkoutModal').classList.remove('hidden');
-}
         function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); }
 
         function togglePayMethod() {
@@ -1098,7 +1086,6 @@
             }
         }
 
-        // ฟังก์ชันหลักที่แก้ไขปัญหาการชำระเงินขัดข้อง
         function processCheckout() {
             try {
                 const manualDiscount = parseFloat(document.getElementById('manualDiscount').value) || 0;
@@ -1130,7 +1117,8 @@
 
                 transactions.push({
                     id: Date.now(), type: 'sale', amount: finalAmount, cost: totalCostOfThisBill, 
-                    description: desc, date: new Date().toISOString(), paymentMethod: method
+                    description: desc, date: new Date().toISOString(), paymentMethod: method,
+                    cartData: JSON.parse(JSON.stringify(cart)) // บันทึกข้อมูลตะกร้าไว้สำหรับระบบคืนสต็อก
                 });
 
                 localStorage.setItem('posTransactions_v11', JSON.stringify(transactions));
@@ -1144,10 +1132,12 @@
             }
         }
 
-        // ================= เปิด-ปิด โมดัล (ปุ่มเบิกเงิน/รายจ่าย) =================
+        // ================= เปิด-ปิด โมดัล (ปุ่มเบิกเงิน/รายจ่าย) และ แก้ไขรายการ =================
         function openTransactionModal(type) {
             document.getElementById('txForm').reset();
             document.getElementById('txType').value = type;
+            document.getElementById('editTxId').value = ''; // รีเซ็ต ID ทุกครั้งที่เปิดสร้างใหม่
+            
             const title = document.getElementById('txModalTitle');
             const icon = document.getElementById('txModalIcon');
             const btn = document.getElementById('btnSaveTx');
@@ -1167,67 +1157,164 @@
             }
             document.getElementById('transactionModal').classList.remove('hidden'); 
         }
+
+        function editTransaction(id) {
+            const tx = transactions.find(t => t.id === id);
+            if(!tx) return;
+            
+            document.getElementById('txForm').reset();
+            document.getElementById('txType').value = tx.type;
+            document.getElementById('editTxId').value = tx.id;
+            
+            const title = document.getElementById('txModalTitle');
+            const icon = document.getElementById('txModalIcon');
+            const btn = document.getElementById('btnSaveTx');
+            
+            document.getElementById('txDesc').value = tx.description.replace('[เบิกเงิน] ', '');
+            document.getElementById('txAmount').value = tx.amount;
+            document.querySelector(`input[name="txPayMethod"][value="${tx.paymentMethod}"]`).checked = true;
+
+            if(tx.type === 'withdraw') {
+                title.innerText = 'แก้ไขรายการเบิกเงิน';
+                icon.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-2 bg-purple-50 text-purple-500';
+                icon.innerHTML = '🏧';
+                btn.className = 'w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all text-lg mt-4';
+            } else if(tx.type === 'expense') {
+                title.innerText = 'แก้ไขรายจ่าย';
+                icon.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-2 bg-orange-50 text-orange-500';
+                icon.innerHTML = '💸';
+                btn.className = 'w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all text-lg mt-4';
+            } else if(tx.type === 'sale') {
+                title.innerText = 'แก้ไขรายการขาย (ยอดเงิน/ช่องทาง)';
+                icon.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-4xl mb-2 bg-blue-50 text-blue-500';
+                icon.innerHTML = '🏪';
+                btn.className = 'w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all text-lg mt-4';
+            }
+            
+            document.getElementById('transactionModal').classList.remove('hidden');
+        }
+
+        function cancelTransaction(id) {
+            const tx = transactions.find(t => t.id === id);
+            if(!tx) return;
+            
+            let msg = 'คุณต้องการลบ / ยกเลิกรายการนี้ใช่หรือไม่?';
+            if(tx.type === 'sale') msg += '\n(สต็อกสินค้าจากรายการขายนี้ จะถูกดึงกลับเข้าคลังอัตโนมัติ)';
+            
+            customAlert('ยืนยันการยกเลิก', msg, 'warning', () => {
+                // ระบบคืนสต็อกหากเป็นรายการขาย
+                if(tx.type === 'sale' && tx.cartData) {
+                    tx.cartData.forEach(item => {
+                        const pIdx = products.findIndex(p => p.id === item.product.id);
+                        if(pIdx > -1) {
+                            if(!products[pIdx].lots) products[pIdx].lots = [];
+                            products[pIdx].lots.push({
+                                id: Date.now() + Math.random(),
+                                qty: item.quantity,
+                                cost: 0, // ตั้งต้นทุน 0 ไว้เพื่อไม่ให้กระทบกำไรย้อนหลังซับซ้อนเกินไป
+                                date: new Date().toISOString()
+                            });
+                        }
+                    });
+                    localStorage.setItem('posProducts_v11', JSON.stringify(products));
+                }
+                
+                transactions = transactions.filter(t => t.id !== id);
+                localStorage.setItem('posTransactions_v11', JSON.stringify(transactions));
+                updateDashboard();
+                customAlert('สำเร็จ', 'ยกเลิกรายการเรียบร้อยแล้ว', 'success');
+            }, true);
+        }
+
         function closeTransactionModal() { document.getElementById('transactionModal').classList.add('hidden'); }
 
         document.getElementById('txForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const type = document.getElementById('txType').value;
+            const editId = document.getElementById('editTxId').value;
             let desc = document.getElementById('txDesc').value;
-            if(type === 'withdraw') { desc = `[เบิกเงิน] ` + desc; }
+            if(type === 'withdraw' && !desc.startsWith('[เบิกเงิน]')) { desc = `[เบิกเงิน] ` + desc; }
+            
+            const amount = parseFloat(document.getElementById('txAmount').value);
+            const payMethod = document.querySelector('input[name="txPayMethod"]:checked').value;
 
-            transactions.push({
-                id: Date.now(), type: type,
-                amount: parseFloat(document.getElementById('txAmount').value),
-                description: desc, date: new Date().toISOString(),
-                paymentMethod: document.querySelector('input[name="txPayMethod"]:checked').value
-            });
+            if (editId) {
+                // อัปเดตข้อมูลรายการเดิม
+                const idx = transactions.findIndex(t => t.id == editId);
+                if(idx > -1) {
+                    transactions[idx].description = desc;
+                    transactions[idx].amount = amount;
+                    transactions[idx].paymentMethod = payMethod;
+                }
+            } else {
+                // เพิ่มรายการใหม่
+                transactions.push({
+                    id: Date.now(), type: type,
+                    amount: amount,
+                    description: desc, date: new Date().toISOString(),
+                    paymentMethod: payMethod
+                });
+            }
             
             localStorage.setItem('posTransactions_v11', JSON.stringify(transactions));
             closeTransactionModal(); updateDashboard();
-            customAlert('บันทึกสำเร็จ', 'อัปเดตยอดเงินเรียบร้อยแล้ว', 'success');
+            customAlert('บันทึกสำเร็จ', 'อัปเดตข้อมูลเรียบร้อยแล้ว', 'success');
         });
 
         // ================= DASHBOARD & CHARTS =================
+        function toggleHistoryView() {
+            showAllHistory = !showAllHistory;
+            document.getElementById('btnToggleHistory').innerText = showAllHistory ? 'ดูเฉพาะวันนี้' : 'ดูทั้งหมด';
+            updateDashboard();
+        }
+
         function updateDashboard() {
             let totalSales = 0, totalCostFromSales = 0, totalExpenses = 0, totalWithdrawals = 0;
             let cashIn = 0, cashOut = 0, transferIn = 0, transferOut = 0;
 
-            const list = document.getElementById('historyList'); list.innerHTML = '';
-            const sorted = [...transactions].sort((a,b) => new Date(b.date) - new Date(a.date));
-
-            sorted.forEach(t => {
+            // 1. คำนวณยอดเงินรวมทั้งหมดจากธุรกรรม *ทั้งหมด*
+            transactions.forEach(t => {
                 const isCash = t.paymentMethod === 'cash';
-                const methodIcon = isCash ? '💵' : '🏦';
-
                 if(t.type === 'sale') {
-                    totalSales += t.amount; totalCostFromSales += t.cost || 0;
+                    totalSales += t.amount; totalCostFromSales += (t.cost || 0);
                     if(isCash) cashIn += t.amount; else transferIn += t.amount;
-                    list.innerHTML += `
-                        <div class="bg-white p-3 rounded-2xl border border-gray-50 flex justify-between items-center hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 shadow-sm">${methodIcon}</div>
-                                <div>
-                                    <p class="text-xs font-bold text-gray-800 line-clamp-1">${t.description}</p>
-                                    <p class="text-[9px] font-bold text-gray-400 mt-0.5 uppercase tracking-widest">${new Date(t.date).toLocaleString('th-TH')}</p>
-                                </div>
-                            </div>
-                            <p class="font-black text-blue-600 text-sm whitespace-nowrap">+ ฿${formatMoney(t.amount)}</p>
-                        </div>
-                    `;
                 } else if(t.type === 'expense' || t.type === 'withdraw') {
                     if(isCash) cashOut += t.amount; else transferOut += t.amount;
-                    let bgIcon = 'bg-orange-50 text-orange-500';
-                    let textAmountClass = 'text-orange-500';
-                    
-                    if(t.type === 'withdraw') {
-                        totalWithdrawals += t.amount;
-                        bgIcon = 'bg-purple-50 text-purple-500'; textAmountClass = 'text-purple-500';
-                    } else {
-                        if(!t.description.startsWith('ซื้อสต็อก:')) totalExpenses += t.amount;
+                    if(t.type === 'withdraw') totalWithdrawals += t.amount;
+                    else if(!t.description.startsWith('ซื้อสต็อก:')) totalExpenses += t.amount;
+                }
+            });
+
+            // 2. กรองและแสดงผลประวัติตามปุ่ม "ดูทั้งหมด" / "ดูเฉพาะวันนี้"
+            const list = document.getElementById('historyList'); 
+            list.innerHTML = '';
+            
+            const todayStr = new Date().toDateString();
+            const listToRender = [...transactions]
+                .filter(t => showAllHistory || new Date(t.date).toDateString() === todayStr)
+                .sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            listToRender.forEach(t => {
+                const isCash = t.paymentMethod === 'cash';
+                const methodIcon = isCash ? '💵' : '🏦';
+                
+                let bgIcon = 'bg-blue-50 text-blue-500';
+                let textAmountClass = 'text-blue-600';
+                let amountPrefix = '+';
+                
+                if (t.type === 'expense' || t.type === 'withdraw') {
+                    amountPrefix = '-';
+                    bgIcon = 'bg-orange-50 text-orange-500';
+                    textAmountClass = 'text-orange-500';
+                    if (t.type === 'withdraw') {
+                        bgIcon = 'bg-purple-50 text-purple-500';
+                        textAmountClass = 'text-purple-500';
                     }
-                    
-                    list.innerHTML += `
-                        <div class="bg-white p-3 rounded-2xl border border-gray-50 flex justify-between items-center hover:bg-gray-50 transition-colors">
+                }
+
+                list.innerHTML += `
+                    <div class="bg-white p-3 rounded-2xl border border-gray-50 flex flex-col gap-2 hover:bg-gray-50 transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.02)] mb-2">
+                        <div class="flex justify-between items-center">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-xl ${bgIcon} flex items-center justify-center shadow-sm">${methodIcon}</div>
                                 <div>
@@ -1235,13 +1322,19 @@
                                     <p class="text-[9px] font-bold text-gray-400 mt-0.5 uppercase tracking-widest">${new Date(t.date).toLocaleString('th-TH')}</p>
                                 </div>
                             </div>
-                            <p class="font-black ${textAmountClass} text-sm whitespace-nowrap">- ฿${formatMoney(t.amount)}</p>
+                            <p class="font-black ${textAmountClass} text-sm whitespace-nowrap">${amountPrefix} ฿${formatMoney(t.amount)}</p>
                         </div>
-                    `;
-                }
+                        <div class="flex justify-end gap-2 border-t border-gray-100 pt-2.5">
+                            <button onclick="editTransaction(${t.id})" class="text-[10px] bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg font-bold transition-colors">✏️ แก้ไข</button>
+                            <button onclick="cancelTransaction(${t.id})" class="text-[10px] bg-red-50 hover:bg-red-100 text-red-500 px-3 py-1.5 rounded-lg font-bold transition-colors">🗑️ ยกเลิก</button>
+                        </div>
+                    </div>
+                `;
             });
 
-            if(transactions.length === 0) list.innerHTML = '<div class="text-center p-6 text-gray-400 text-[10px] font-bold uppercase tracking-widest border-2 border-dashed border-gray-100 rounded-2xl mt-2">ยังไม่มีความเคลื่อนไหว</div>';
+            if(listToRender.length === 0) {
+                list.innerHTML = '<div class="text-center p-6 text-gray-400 text-[10px] font-bold uppercase tracking-widest border-2 border-dashed border-gray-100 rounded-2xl mt-2">ไม่มีประวัติการทำรายการ</div>';
+            }
 
             const netProfit = totalSales - totalCostFromSales - totalExpenses;
             const cashBalance = cashIn - cashOut;
@@ -1294,4 +1387,4 @@
         }
     </script>
 </body>
-</html> กดชำระเงินโอน แล้วมันไม่ได้อีกละ
+</html>
