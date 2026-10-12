@@ -76,9 +76,13 @@
                         <p class="text-[10px] font-bold text-green-600 uppercase tracking-wider mb-1">กำไรสุทธิ</p>
                         <p class="text-xl font-black text-green-700">฿ <span id="displayNetProfit">0</span></p>
                     </div>
-                    <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-2xl shadow-sm border border-indigo-200">
+                    <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-2xl shadow-sm border border-indigo-200 flex flex-col justify-center relative">
                         <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-1">มูลค่าคลังสินค้า</p>
                         <p class="text-xl font-black text-indigo-700">฿ <span id="displayInventoryValue">0</span></p>
+                        <!-- เพิ่มส่วนแสดงต้นทุนรวม -->
+                        <div class="mt-1 pt-1 border-t border-indigo-200/60">
+                            <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-wider">ต้นทุนรวม: ฿ <span id="displayTotalCost">0</span></p>
+                        </div>
                     </div>
                 </div>
 
@@ -105,7 +109,6 @@
                     </div>
                 </div>
                 
-                <!-- ส่วนประวัติรายการที่มีระบบเลื่อนภายในตัว (Scrollable Container) ป้องกันหน้ายาวเกินไป -->
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative z-30">
                     <div class="flex justify-between items-center p-4 border-b border-gray-50">
                         <div class="flex items-center gap-2">
@@ -114,7 +117,6 @@
                         </div>
                         <button onclick="clearTransactions()" class="text-[9px] uppercase tracking-wider text-red-500 font-bold bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors relative z-40 cursor-pointer">ล้างบัญชี</button>
                     </div>
-                    <!-- กำหนดความสูงสูงสุด max-h-64 และเปิด scroll-y เพื่อไม่ให้หน้ายาวเกินไป -->
                     <div id="historyList" class="p-2 max-h-64 overflow-y-auto space-y-1"></div>
                 </div>
             </main>
@@ -676,7 +678,7 @@
                                 <h4 class="font-bold text-gray-800 text-lg line-clamp-1">${p.name}</h4>
                                 <div class="mt-1 flex items-baseline gap-1.5">
                                     <span class="text-sm font-black text-teal-600">฿${formatMoney(curPrice)}</span>
-                                    ${isDiscounted ? `<span class="text-[9px] text-gray-400 line-through">฿\${formatMoney(p.price)}</span><span class="text-[8px] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md">-\${p.discount}%</span>` : ''}
+                                    ${isDiscounted ? `<span class="text-[9px] text-gray-400 line-through">฿${formatMoney(p.price)}</span><span class="text-[8px] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md">-${p.discount}%</span>` : ''}
                                 </div>
                             </div>
                             <div class="text-[10px] font-bold px-3 py-2 rounded-xl border ${stockColor} text-center flex-shrink-0 flex flex-col justify-center uppercase tracking-widest">
@@ -870,6 +872,35 @@
             renderPOSProducts();
         }
 
+        // ฟังก์ชันใหม่สำหรับการแก้จำนวนตะกร้าในหน้า Checkout
+        function updateCartQtyInCheckout(productId, delta) {
+            const itemIndex = cart.findIndex(i => i.product.id === productId);
+            if(itemIndex > -1) {
+                const product = products.find(p => p.id === productId); 
+                const totalStock = getTotalStock(product);
+                let newQty = cart[itemIndex].quantity + delta;
+
+                if(newQty > totalStock) {
+                    customAlert('ขออภัย', 'จำนวนสินค้าเกินสต็อกที่มีครับ', 'warning');
+                    return;
+                }
+                
+                if(newQty <= 0) {
+                    cart.splice(itemIndex, 1);
+                } else {
+                    cart[itemIndex].quantity = newQty;
+                }
+
+                renderPOSProducts(); // อัปเดต UI พื้นหลังด้วย
+                
+                if(cart.length === 0) {
+                    closeCheckoutModal();
+                } else {
+                    openCheckoutModal(); // รีเฟรช Modal ชำระเงิน
+                }
+            }
+        }
+
         function clearCart() { 
             if(cart.length > 0) {
                 customAlert('ล้างตะกร้า', 'ต้องการล้างรายการสินค้าทั้งหมดในตะกร้าใช่หรือไม่?', 'warning', () => { cart = []; renderPOSProducts(); }, true);
@@ -909,8 +940,15 @@
                 activeRules.forEach(r => { if(r.products.includes(item.product.id)) { ruleAccumulators[r.id] += rowTotal; } });
                 list.innerHTML += `
                     <div class="flex justify-between items-center py-2 border-b border-gray-50 border-dashed last:border-0">
-                        <span class="text-gray-800 text-sm font-bold flex items-center">${item.product.name} <span class="text-teal-600 font-black ml-2 text-[10px] bg-teal-50 px-2 py-0.5 rounded-full">x${item.quantity}</span></span>
-                        <span class="font-black text-gray-800 text-sm">${formatMoney(rowTotal)} ฿</span>
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center bg-gray-100 rounded-lg p-0.5 shadow-inner">
+                                <button type="button" onclick="updateCartQtyInCheckout(${item.product.id}, -1)" class="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-white rounded-md font-bold transition-colors">-</button>
+                                <span class="w-6 text-center text-xs font-black text-teal-600">${item.quantity}</span>
+                                <button type="button" onclick="updateCartQtyInCheckout(${item.product.id}, 1)" class="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-white rounded-md font-bold transition-colors">+</button>
+                            </div>
+                            <span class="text-gray-800 text-sm font-bold truncate max-w-[140px]">${item.product.name}</span>
+                        </div>
+                        <span class="font-black text-gray-800 text-sm whitespace-nowrap">${formatMoney(rowTotal)} ฿</span>
                     </div>
                 `;
             });
@@ -1022,7 +1060,7 @@
 
                 transactions.push({
                     id: Date.now(), type: 'sale', amount: finalAmount, cost: totalCostOfThisBill, 
-                    description: desc, date: new Date().toISOString(), paymentMethod: method,
+                    description: desc, date: new Date().toISOString(), paymentMethod: method, // <-- ตรงนี้สำคัญมาก เพื่อแยกเงินสด/โอน
                     cartData: JSON.parse(JSON.stringify(cart))
                 });
 
@@ -1073,7 +1111,8 @@
             
             document.getElementById('txDesc').value = tx.description.replace('[เบิกเงิน] ', '');
             document.getElementById('txAmount').value = tx.amount;
-            document.querySelector(`input[name="txPayMethod"][value="${tx.paymentMethod}"]`).checked = true;
+            // เพิ่มการตรวจสอบกรณีที่ tx.paymentMethod หายไปสำหรับประวัติเก่าๆ
+            document.querySelector(`input[name="txPayMethod"][value="${tx.paymentMethod || 'cash'}"]`).checked = true;
 
             if(tx.type === 'withdraw') {
                 title.innerText = 'แก้ไขรายการเบิกเงิน';
@@ -1151,7 +1190,10 @@
             let cashIn = 0, cashOut = 0, transferIn = 0, transferOut = 0;
 
             transactions.forEach(t => {
-                const isCash = t.paymentMethod === 'cash';
+                // เพิ่ม Fallback ให้รายการเก่าที่ไม่มี paymentMethod ถือเป็น 'cash' เสมอ จะได้แสดงผลในหน้าจอถูกต้อง
+                const payMethod = t.paymentMethod || 'cash';
+                const isCash = payMethod === 'cash';
+                
                 if(t.type === 'sale') {
                     totalSales += t.amount; totalCostFromSales += (t.cost || 0);
                     if(isCash) cashIn += t.amount; else transferIn += t.amount;
@@ -1169,8 +1211,11 @@
                 .sort((a,b) => new Date(b.date) - new Date(a.date));
 
             listToRender.forEach(t => {
-                const isCash = t.paymentMethod === 'cash';
+                // ดึงการแสดงผลกระเป๋าเงินเพื่อแสดงไอคอนด้วย Fallback
+                const payMethod = t.paymentMethod || 'cash';
+                const isCash = payMethod === 'cash';
                 const methodIcon = isCash ? '💵' : '🏦';
+                
                 let bgIcon = 'bg-blue-50 text-blue-500', textAmountClass = 'text-blue-600', amountPrefix = '+';
                 if (t.type === 'expense' || t.type === 'withdraw') {
                     amountPrefix = '-';
@@ -1206,7 +1251,18 @@
             const cashBalance = cashIn - cashOut;
             const bankBalance = transferIn - transferOut;
             const totalBalance = cashBalance + bankBalance;
-            let inventoryValue = 0; products.forEach(p => { inventoryValue += (getTotalStock(p) * actualPrice(p)); });
+            
+            // คำนวณมูลค่าคลังและต้นทุนรวม
+            let inventoryValue = 0; 
+            let totalCost = 0;
+            products.forEach(p => { 
+                inventoryValue += (getTotalStock(p) * actualPrice(p)); 
+                if(p.lots) {
+                    p.lots.forEach(lot => {
+                        totalCost += (lot.qty * lot.cost);
+                    });
+                }
+            });
 
             document.getElementById('displaySales').innerText = formatMoney(totalSales);
             document.getElementById('displayExpenses').innerText = formatMoney(totalExpenses);
@@ -1216,6 +1272,7 @@
             document.getElementById('displayBankBalance').innerText = formatMoney(bankBalance);
             document.getElementById('displayTotalBalance').innerText = formatMoney(totalBalance);
             document.getElementById('displayInventoryValue').innerText = formatMoney(inventoryValue);
+            document.getElementById('displayTotalCost').innerText = formatMoney(totalCost);
 
             renderChart(totalSales, totalCostFromSales, totalExpenses);
         }
